@@ -529,6 +529,50 @@
       
       testCreateElement: function(t){
         t.assertEqual('<span class="yay"></span>', $('<div>').append($('<span>').addClass('yay')).html());
+      },
+      
+      testProxy: function(t){
+      
+        $('#some_element').removeClass('red');
+        $('#some_element').removeClass('blue');
+        $('#some_element').removeClass('orange');
+      
+        var obj = {
+          color: 'blue',
+          test: function () {
+            $('#some_element').addClass(this.color);
+          },
+          test2: function (value) {
+            $('#some_element').addClass(value);
+          }
+        };
+        
+        var boundTest = $.proxy(obj.test, obj);
+        var boundTest2 = $.proxy(obj.test2, obj, 'orange');
+        
+        $('#some_element').bind('click', boundTest);
+        click($('#some_element').get(0));
+        
+        t.assert($('#some_element').hasClass('blue'));
+        
+        obj.color = 'red';
+        
+        click($('#some_element').get(0));
+        
+        t.assert($('#some_element').hasClass('red'));
+        
+        $('#some_element').removeClass('red');
+        $('#some_element').removeClass('blue');        
+        
+        $('#some_element').unbind('click', boundTest);
+        
+        $('#some_element').bind('click', boundTest2);
+        click($('#some_element').get(0));
+        
+        t.assert($('#some_element').hasClass('orange'));
+        t.assert(!$('#some_element').hasClass('red'));
+        t.assert(!$('#some_element').hasClass('blue'));
+        
       }
 
     });

@@ -32,7 +32,11 @@ var Zepto = (function() {
   }
   
   $.extend = function(target, src){ for(k in src) target[k] = src[k] }
-  $.proxy = function (f, object) { return f.bind.apply(f, slice.call(arguments, 1)); };
+  $.proxy = function(fun, obj){
+    var args; 
+    return Function.prototype.bind ? 
+      fun.bind.apply(fun,slice.call(arguments,1))
+      : (args = slice.call(arguments,2), function(){ return fun.apply(obj,args.concat(slice.call(arguments)))})}
   camelize = function(str){ return str.replace(/-+(.)?/g, function(match, chr){ return chr ? chr.toUpperCase() : '' }) }
 
   $.fn = {
