@@ -1,7 +1,7 @@
 var Zepto = (function() {
   var slice=[].slice, d=document,
     ADJ_OPS={append: 'beforeEnd', prepend: 'afterBegin', before: 'beforeBegin', after: 'afterEnd'},
-	singleTagRegex = /^<(\w+)\s*\/?>(?:<\/\1>)?$/,	
+    singleTagRegex = /^<(\w+)\s*\/?>(?:<\/\1>)?$/,
     match, e, k, css, un;
 
   // fix for iOS 3.2
@@ -32,6 +32,7 @@ var Zepto = (function() {
   }
   
   $.extend = function(target, src){ for(k in src) target[k] = src[k] }
+  $.proxy = function (f, object) { return f.bind.apply(f, slice.call(arguments, 1)); };
   camelize = function(str){ return str.replace(/-+(.)?/g, function(match, chr){ return chr ? chr.toUpperCase() : '' }) }
 
   $.fn = {
