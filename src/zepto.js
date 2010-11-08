@@ -1,7 +1,8 @@
 var Zepto = (function() {
   var slice=[].slice, d=document,
     ADJ_OPS={append: 'beforeEnd', prepend: 'afterBegin', before: 'beforeBegin', after: 'afterEnd'},
-    e, k, css, un;
+	singleTagRegex = /^<(\w+)\s*\/?>(?:<\/\1>)?$/,	
+    match, e, k, css, un;
 
   // fix for iOS 3.2
   if(String.prototype.trim === un)
@@ -15,7 +16,19 @@ var Zepto = (function() {
   Z.prototype = $.fn;
 
   function $(_, context){
-    return _ == d ? new Z : (context !== un) ? $(context).find(_) : new Z(compact(_ instanceof Z ? _.dom : (_ instanceof Array ? _ : (_ instanceof Element ? [_] : $$(d, _)))), _);
+    return _ == d ? 
+    new Z 
+    : (context !== un) ? 
+      $(context).find(_) 
+      : new Z(compact(
+        _ instanceof Z ? 
+          _.dom 
+          : (_ instanceof Array ? 
+            _ 
+            : (_ instanceof Element ? 
+              [_] 
+              : ((match = singleTagRegex.exec(_)) ? [d.createElement(match[1])] : $$(d, _))))), 
+        _);
   }
   
   $.extend = function(target, src){ for(k in src) target[k] = src[k] }
@@ -110,12 +123,16 @@ var Zepto = (function() {
   
   ['width','height'].forEach(function(m){ $.fn[m] = function(){ return this.offset()[m] }});
 
-  for(k in ADJ_OPS)
-    $.fn[k] = (function(op){
-      return function(html){ return this.each(function(el){
-        el['insertAdjacent' + (html instanceof Element ? 'Element' : 'HTML')](op,html)
-      })};
+  for (k in ADJ_OPS) {
+    $.fn[k] = (function (op) {
+      return function (html) {
+        html = (html instanceof Z) ? html.get(0) : html;
+        return this.each(function (el) {
+          el['insertAdjacent' + (html instanceof Element ? 'Element' : 'HTML')](op, html)
+        })
+      };
     })(ADJ_OPS[k]);
+  }
 
   Z.prototype = $.fn;
 

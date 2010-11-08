@@ -477,6 +477,10 @@
         t.assertEqual($("p > span").index(".yay"), 0);
         t.assertEqual($("span").index("span"), 0);
         t.assertEqual($("span").index("boo"), -1);
+      },
+      
+      testCreateElement: function(t){
+        t.assertEqual('<span class="yay"></span>', $('<div>').append($('<span>').addClass('yay')).html());
       }
 
     });
