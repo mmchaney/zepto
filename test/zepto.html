@@ -322,6 +322,35 @@
         t.assertEqual(3, counter); // 1 = body click, 2 = element click, 3 = element mousedown
       },
       
+      testUnbind: function(t){
+        var counter = 0,
+            fun = function(){ counter++ };
+        
+        $(document.body).bind('click', fun);
+        click($('#some_element').get(0));
+        
+        $(document.body).unbind('click', fun);
+        click($('#some_element').get(0));
+        
+        t.assertEqual(1, counter);
+        
+        counter = 0;
+        
+        $(document.body).bind('click', fun);
+        $('#some_element').bind('click mousedown', fun);
+        
+        click($('#some_element').get(0));
+        mousedown($('#some_element').get(0));
+        
+        $(document.body).unbind('click', fun);
+        $('#some_element').unbind('click mousedown', fun);
+        
+        click($('#some_element').get(0));
+        mousedown($('#some_element').get(0));
+        
+        t.assertEqual(3, counter); // 1 = body click, 2 = element click, 3 = element mousedown
+      },
+      
       testDelegate: function(t){
         var counter = 0, pcounter = 0;
         $(document.body).delegate('#some_element', 'click', function(){ counter++ });

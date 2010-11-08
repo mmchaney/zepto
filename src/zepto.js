@@ -96,6 +96,11 @@ var Zepto = (function() {
         event.split(/\s/).forEach(function(event){ el.addEventListener(event, callback, false); });
       });
     },
+    unbind: function(event, callback){
+      return this.each(function(el){
+        event.split(/\s/).forEach(function(event){ el.removeEventListener(event, callback, false); });
+      });
+    },
     delegate: function(selector, event, callback){
       return this.each(function(el){
         el.addEventListener(event, function(event){
