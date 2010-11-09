@@ -82,6 +82,7 @@ var Zepto = (function() {
           else el.setAttribute(name,value);
         });
     },
+    removeAttr: function(name){ return this.each(function (el) { el.removeAttribute(name); }) },
     offset: function(){
       var obj = this.dom[0].getBoundingClientRect();
       return { left: obj.left+d.body.scrollLeft, top: obj.top+d.body.scrollTop, width: obj.width, height: obj.height };

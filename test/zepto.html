@@ -412,6 +412,15 @@
         t.assertEqual('id', $('#attr_2').attr('data-id'));
       },
       
+      testRemoveAttr: function(t){
+        var els = $('#attr_1, #attr_2');
+        
+        els.attr("data-id", "someOtherId");
+        els.removeAttr("data-id");
+        
+        t.assertUndefined(els.attr("data-id"));
+      },
+      
       testChaining: function(t){
         t.assert(document.getElementById('nay').innerHTML == "nay");
         $('span.nay').css('color', 'red').html('test');
