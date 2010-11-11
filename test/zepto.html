@@ -65,6 +65,8 @@
 
   <div class="filtertest" id="filtertest1"></div>
   <div class="filtertest" id="filtertest2"></div>
+
+  <div id="delegate_test"><span class="first-level"><span class="second-level">hi</span></span></div>
   
   <script>
     function click(el){
@@ -78,6 +80,9 @@
       event.initMouseEvent('mousedown', true, true, document.defaultView, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
       el.dispatchEvent(event);
     }
+
+    var globalVarSetFromReady = "";
+    $(document).ready(function(){ globalVarSetFromReady = 'hi!' });
 
     Evidence.TestCase.extend('ZeptoTest', {
       
@@ -128,6 +133,16 @@
         // DOM Element
         var el = document.getElementById('find1');
         t.assertEqual(4, $('span.findme', el).get().length);
+      },
+
+      testDollarWithDocument: function(t){
+        var z = $(document);
+        t.assertEqual(0, z.get().length);
+        t.assertEqual('', z.selector);
+      },
+
+      testReady: function(t){
+        t.assertEqual('hi!', globalVarSetFromReady);
       },
       
       testNext: function(t){
@@ -352,7 +367,7 @@
       },
       
       testDelegate: function(t){
-        var counter = 0, pcounter = 0;
+        var counter = 0, pcounter = 0, content = '';
         $(document.body).delegate('#some_element', 'click', function(){ counter++ });
         $('p').delegate('span.yay', 'click', function(){ counter++ });
         $(document.body).delegate('p', 'click', function(){ pcounter++ });
@@ -368,6 +383,13 @@
         
         click($('p').get(0));
         t.assertEqual(3, pcounter);
+
+        $('div#delegate_test').delegate('span.second-level', 'click', function(){
+          t.assertEqual($('span.second-level').get(0), this);
+          content = $(this).html();
+        });
+        click($('span.second-level').get(0));
+        t.assertEqual('hi', content);
       },
       
       testLive: function(t){
@@ -379,8 +401,16 @@
         
         click($('#live_1').get(0));
         click($('#live_2').get(0));
+
+        $('p.live').remove();
+        $(document.body).append('<p class="live" id="live_this_test"></p>');
         
-        t.assertEqual(2, counter);
+        $('p.live').live('click', function(){ 
+          t.assertEqual(document.getElementById('#live_this_test'), this);
+        });
+        click($('#live_this_test').get(0));
+        
+        t.assertEqual(3, counter);
       },
       
       testAttr: function(t){
